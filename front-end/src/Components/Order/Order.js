@@ -11,7 +11,7 @@ export default class Order extends Component {
                         <div class="order-title">
                             <h2>
                                 Pedido
-                                    <small className="order-number"> #0001</small>
+                                    <small className="order-number"> #0000</small>
                             </h2>
                         </div>
                         <div class="total-order">
@@ -20,13 +20,37 @@ export default class Order extends Component {
                         <hr />
                     </div>
                     <form>
-                        <input
-                            type="text"
-                            className="input-order"
-                            placeholder="Cliente" />
-                        <input type="text" placeholder="produto" />
-                        <input type="text" placeholder="quantidade" />
-                        <input type="text" placeholder="preço" />
+                        <div>
+                            <input
+                                type="text"
+                                className="input-order input-md"
+                                placeholder="Cod. Cliente" />
+                            <input
+                                type="text"
+                                className="input-order input-lg"
+                                placeholder="Nome Cliente" readOnly tabIndex="-1" />
+                        </div>
+                        <hr className="line" />
+                        <div>
+                            <input
+                                type="text"
+                                className="input-order input-md"
+                                placeholder="Cod. Produto" />
+                            <input
+                                type="text"
+                                className="input-order input-lg"
+                                placeholder="Produto" readOnly tabIndex="-1" />
+                            <input
+                                type="text"
+                                className="input-order input-sm"
+                                placeholder="Qtd" />
+                            <input
+                                type="text"
+                                className="input-order input-md"
+                                placeholder="Preço" />
+                            <button className="btn">Adicionar</button>
+                        </div>
+
                         <table>
                             <tr>
                                 <th>#</th>
