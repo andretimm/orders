@@ -1,0 +1,55 @@
+.content{
+    margin-left:25%;
+}
+
+.content-panel{
+    background-color: #FFFFFF;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 10px;
+}
+
+.header hr{
+    margin-top:5px;
+    border-color: #ccc;
+}
+
+.order-title{
+    width: 50%;
+    float:left;
+}
+
+.order-title h2{
+    color: #4d4d4d;
+}
+
+.order-title h2 .order-number{
+    font-size: 14px;
+    font-weight: 500;
+    color:#737373;
+}
+
+.total-order{
+    width: 50%;
+    float:right;
+    color: #4d4d4d;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: right;
+}
+
+form table{
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+form td, th {
+    border: 1px solid #4d4d4d;
+    text-align: left;
+    padding: 8px;
+}
+  
+form tr:nth-child(even) {
+    background-color: #ccc;
+}
