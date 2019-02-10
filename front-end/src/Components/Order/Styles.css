@@ -43,14 +43,49 @@
     margin-left: 1%;
 }
 
+input[readonly]{
+    background-color:#ddd;
+    border:1px solid #ccc;
+}
+
 .input-order{
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 5px;
     height: 35px;
-    margin: 10px;
+    margin-left: 10px;
     padding: 0 10px;
     font-size: 14px;
+}
+
+.input-order-group {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px 0 0 5px;
+    height: 35px;
+    font-size: 14px;
+    padding: 0 10px;
+    outline: none;
+}
+
+.input-container {
+    display: -ms-flexbox; /* IE10 */
+    display: flex;
+    width: 100%;
+    margin: 10px;
+}
+
+.icon-container{
+    height: 35px;
+    background: #663991;
+    border-radius: 0 5px 5px 0;
+    display: flex;
+    align-items: center;
+}  
+
+.icon {
+    color: white;
+    min-width: 50px;
 }
 
 .input-sm{
@@ -78,10 +113,27 @@
     font-size: 16px; 
 }
 
+.td-center{
+    text-align: center;
+}
+
+.btn-remove{
+    background: #ff1a1a;
+    border-radius: 5px;
+    height: 25px;
+    width: 30px;
+    border: 0;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px; 
+}
+
 form table{
+    width: 98%;
+    margin-left: 1%;
     font-family: arial, sans-serif;
     border-collapse: collapse;
-    width: 100%;
 }
 
 form td, th {

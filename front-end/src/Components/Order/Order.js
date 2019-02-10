@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import './Styles.css';
 
 export default class Order extends Component {
@@ -8,27 +10,33 @@ export default class Order extends Component {
             <div className="content">
                 <div className="content-panel">
                     <div className="header">
-                        <div class="order-title">
+                        <div className="order-title">
                             <h2>
                                 Pedido
                                     <small className="order-number"> #0000</small>
                             </h2>
                         </div>
                         <div class="total-order">
-                            <h2>Total R$00,00</h2>
+                            <h2>Total R$0</h2>
                         </div>
                         <hr />
                     </div>
                     <form>
                         <div>
-                            <input
-                                type="text"
-                                className="input-order input-md"
-                                placeholder="Cod. Cliente" />
-                            <input
-                                type="text"
-                                className="input-order input-lg"
-                                placeholder="Nome Cliente" readOnly tabIndex="-1" />
+                            <div class="input-container">
+                                <input
+                                    type="text"
+                                    className="input-order-group input-md"
+                                    placeholder="Cod. Cliente" />
+                                <div className="icon-container">
+                                    <FontAwesomeIcon className="icon" icon={faSearch} />
+                                </div>
+                                <input
+                                    type="text"
+                                    className="input-order input-lg"
+                                    placeholder="Nome Cliente" readOnly tabIndex="-1" />
+                            </div>
+                            
                         </div>
                         <hr className="line" />
                         <div>
@@ -64,8 +72,10 @@ export default class Order extends Component {
                                 <td>Maria Anders</td>
                                 <td>Germany</td>
                                 <td>Germany</td>
-                                <td>
-                                    <button>Remover</button>
+                                <td className="td-center">
+                                    <button className="btn-remove">
+                                        X
+                                    </button>
                                 </td>
                             </tr>
                             <tr>
@@ -73,8 +83,10 @@ export default class Order extends Component {
                                 <td>Maria Anders</td>
                                 <td>Germany</td>
                                 <td>Germany</td>
-                                <td>
-                                    <button>Remover</button>
+                                <td className="td-center">
+                                    <button className="btn-remove">
+                                        X
+                                    </button>
                                 </td>
                             </tr>
                             <tr>
@@ -82,8 +94,10 @@ export default class Order extends Component {
                                 <td>Maria Anders</td>
                                 <td>Germany</td>
                                 <td>Germany</td>
-                                <td>
-                                    <button>Remover</button>
+                                <td className="td-center">
+                                    <button className="btn-remove">
+                                        X
+                                    </button>
                                 </td>
                             </tr>
                             <tr>
@@ -91,8 +105,10 @@ export default class Order extends Component {
                                 <td>Maria Anders</td>
                                 <td>Germany</td>
                                 <td>Germany</td>
-                                <td>
-                                    <button>Remover</button>
+                                <td className="td-center">
+                                    <button className="btn-remove">
+                                        X
+                                    </button>
                                 </td>
                             </tr>
                             <tr>
@@ -100,8 +116,10 @@ export default class Order extends Component {
                                 <td>Maria Anders</td>
                                 <td>Germany</td>
                                 <td>Germany</td>
-                                <td>
-                                    <button>Remover</button>
+                                <td className="td-center">
+                                    <button className="btn-remove">
+                                        X
+                                    </button>
                                 </td>
                             </tr>
                         </table>

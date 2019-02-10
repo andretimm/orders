@@ -23,8 +23,8 @@
 
 .login-wrapper form img{
     width: 30%;
-    height: 35%;
     margin-left: 35%;
+    margin-bottom: 10px;
 }
 
 .login-wrapper form input {
