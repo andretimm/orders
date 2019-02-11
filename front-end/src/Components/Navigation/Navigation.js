@@ -8,38 +8,25 @@ import Header from '../Header/Header';
 export default class Navigation extends Component {
 
     state = {
-        active: '#0000',
-        orders: [
-            {
-                number: '#0000',
-                customer: 'Luke ​Skywalker'
-            },
-            {
-                number: '#0001',
-                customer: 'Darth ​Vader',
-            },
-            {
-                number: '#0002',
-                customer: 'Han ​Solo',
-            },
-            {
-                number: '#0003',
-                customer: 'Imperador ​Palpatine',
-            },
-        ]
+        active: '',
+        orders: []
     };
 
     /**
      * Altera para ativo a ordem que estiver selecionada
      */
-    handleChanceActive = (e) => {
+    handleChangeActive = (e) => {
         e.preventDefault();
-        const order =  e.currentTarget.id;
-        this.setState({active: order});
+        const order = e.currentTarget.id;
+        console.log(order);
+        this.setState({ active: order });
+        console.log();
+        this.props.onSelectOrder(this.state.orders.find((e) => e.id == order));
     }
 
-    componentDidMount(){
-        
+    async componentDidMount() {
+        const orders = await api.get("api/orders");
+        this.setState({orders : orders.data});
     }
 
     render() {
@@ -49,13 +36,13 @@ export default class Navigation extends Component {
                     <li><Header /></li>
                     {this.state.orders.map(order => (
                         <li>
-                            <a 
-                                href="#customer"   
-                                id={order.number}                       
-                                onClick={this.handleChanceActive}
-                                className={order.number === this.state.active ? 'active' : ''}
-                                key={order.number}>
-                                {order.number} - {order.customer}
+                            <a
+                                href="#customer"
+                                id={order.id}
+                                onClick={this.handleChangeActive}
+                                className={order.id == this.state.active ? 'active' : ''}
+                                key={order._id}>
+                                #{order.id} - {order.customerName}
                             </a>
                         </li>
                     ))}

@@ -17,26 +17,65 @@ export default class Order extends Component {
         price: '',
         multiple: 1,
         qtd: '',
+        info: '',
         customers: [],
-        products: []
+        products: [],
+        itens: [],
+        edit: true,
     };
 
-    async componentDidMount() {
-        const customers = await api.get('api/customers');
-        const products = await api.get('api/products');
-        this.setState({ products: products.data, customers: customers.data });
+    componentDidMount() {
+        this.handleStart();
     }
 
-    handleChanceCustomer = (event) => {
+    handleStart = async () => {
+        let customers = [];
+        let products = [];
+        customers = await api.get('api/customers');
+        customers = customers.data;
+        if (!this.props.order.id) {
+            products = await api.get('api/products');
+            products = products.data
+            this.setState({
+                products,
+                customers,
+            });
+        } else {
+            const { id, customerId, total, itens } = this.props.order;
+            this.setState({
+                products,
+                customers,
+                customerSelected: customerId,
+                total,
+                order: id,
+                itens,
+                edit: false
+            });
+        }
+    }
+
+    //Atualiza o componente sempre que selecionar outro pedido
+    componentWillReceiveProps(props) {
+        console.log("refesh");
+        const { order } = this.props;
+        if (props.order !== order) {
+            console.log("refesh");
+            this.handleStart();
+        }
+    }
+
+    handleChangeCustomer = (event) => {
         this.setState({ customerSelected: event.target.value });
     }
 
-    handleChanceProduct = (event) => {
+    handleChangeProduct = (event) => {
         this.setState({ productSelected: event.target.value });
         if (event.target.value !== "") {
             const { price, multiple } = this.state.products.find((e) => e.id == event.target.value);
             if (multiple > 1) {
-                alert(`Este produto se é vendido em multiplos de ${multiple}. Mas fique tranquilo que fazemos o calculo para você. Ex.:caso você digite 5 vamos multiplicar por ${multiple} resultando em ${multiple * 5}`)
+                this.setState({ info: `Este produto apenas é vendido em multiplos de ${multiple}. Mas fique tranquilo que fazemos o calculo para você. Ex.:caso você digite 5 vamos multiplicar por ${multiple} resultando em ${multiple * 5}` });
+            } else {
+                this.setState({ info: '' });
             }
             this.setState({ price, multiple, qtd: '' });
         } else {
@@ -44,8 +83,16 @@ export default class Order extends Component {
         }
     }
 
-    handleChanceQtd = (event) => {
-        const qtd = event.target.value * this.state.multiple;
+    handleChangeQtd = (event) => {
+        const qtd = event.target.value;
+        this.setState({ qtd });
+    }
+
+    handleBlurQtd = (event) => {
+        let qtd = event.target.value;
+        if (event.target.value % this.state.multiple != 0) {
+            qtd = qtd * this.state.multiple;
+        }
         this.setState({ qtd });
     }
 
@@ -66,10 +113,9 @@ export default class Order extends Component {
                         <hr />
                     </div>
                     <form>
-
-                        <div class="input-container">
+                        <div className="input-container">
                             <div class="select-style">
-                                <select value={this.state.customerSelected} onChange={this.handleChanceCustomer}>
+                                <select value={this.state.customerSelected} onChange={this.handleChangeCustomer}>
                                     <option value="">Selecione um cliente</option>
                                     {this.state.customers.map(customer => (
                                         <option key={customer.id} value={customer.id}>{customer.name}</option>
@@ -83,9 +129,9 @@ export default class Order extends Component {
 
                         <hr className="line" />
 
-                        <div class="input-container">
+                        <div className={this.state.edit ? 'input-container' : 'hidden'} >
                             <div class="select-style">
-                                <select value={this.state.productSelected} onChange={this.handleChanceProduct}>
+                                <select value={this.state.productSelected} onChange={this.handleChangeProduct}>
                                     <option value="">Selecione um produto</option>
                                     {this.state.products.map(product => (
                                         <option key={product.id} value={product.id}>{product.name}</option>
@@ -101,7 +147,8 @@ export default class Order extends Component {
                                 className="input-order input-sm"
                                 placeholder="Qtd"
                                 value={this.state.qtd}
-                                onChange={this.handleChanceQtd} />
+                                onBlur={this.handleBlurQtd}
+                                onChange={this.handleChangeQtd} />
 
                             <input
                                 type="text"
@@ -116,69 +163,34 @@ export default class Order extends Component {
 
                         </div>
 
-                        <table>
-                            <tr>
-                                <th>#</th>
+                        <div className={this.state.edit ? 'info' : 'hidden'}>
+                            <hr className="line" />
+                            <p>{this.state.info}</p>
+                        </div>
+
+                        <table className="products">
+                            <tr className="firstRow">
                                 <th>Produto</th>
                                 <th>Quantidade</th>
                                 <th>Preço</th>
-                                <th></th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th className={this.state.edit ? '' : 'hidden'}></th>
                             </tr>
-                            <tr>
-                                <td>1</td>
-                                <td>Maria Anders</td>
-                                <td>Germany</td>
-                                <td>Germany</td>
-                                <td className="td-center">
-                                    <button className="btn-remove">
-                                        X
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Maria Anders</td>
-                                <td>Germany</td>
-                                <td>Germany</td>
-                                <td className="td-center">
-                                    <button className="btn-remove">
-                                        X
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td>Maria Anders</td>
-                                <td>Germany</td>
-                                <td>Germany</td>
-                                <td className="td-center">
-                                    <button className="btn-remove">
-                                        X
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>4</td>
-                                <td>Maria Anders</td>
-                                <td>Germany</td>
-                                <td>Germany</td>
-                                <td className="td-center">
-                                    <button className="btn-remove">
-                                        X
-                                    </button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>5</td>
-                                <td>Maria Anders</td>
-                                <td>Germany</td>
-                                <td>Germany</td>
-                                <td className="td-center">
-                                    <button className="btn-remove">
-                                        X
-                                    </button>
-                                </td>
-                            </tr>
+                            {this.state.itens.map(item => (
+                                <tr key={item.id}>
+                                    <td>{item.productName}</td>
+                                    <td>{item.qtd}</td>
+                                    <td>{item.price}</td>
+                                    <td>{item.price * item.qtd}</td>
+                                    <td>{item.status}</td>
+                                    <td className={this.state.edit ? 'td-center' : 'hidden'}>
+                                        <button className="btn-remove">
+                                            X
+                                     </button>
+                                    </td>
+                                </tr>
+                            ))}
                         </table>
                     </form>
                 </div>

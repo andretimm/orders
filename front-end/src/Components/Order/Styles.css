@@ -9,6 +9,10 @@
     padding: 10px;
 }
 
+.hidden { 
+    display:none;
+}
+
 .header hr{
     margin-top:5px;
     border-color: #ccc;
@@ -146,19 +150,42 @@ input[readonly]{
     font-size: 16px; 
 }
 
-form table{
-    width: 98%;
-    margin-left: 1%;
-    font-family: arial, sans-serif;
-    border-collapse: collapse;
+.info p{
+    margin: 5px 10px 10px 10px;
+    font-size: 12px;
+    font-weight: bold;
+    color:#555;
+    font-style: italic;
 }
 
-form td, th {
-    border: 1px solid #4d4d4d;
-    text-align: left;
+.products {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+  
+.products td, .products th {
+    border: 1px solid #fff;
     padding: 8px;
 }
   
-form tr:nth-child(even) {
-    background-color: #ccc;
+.products tr:nth-child(even){background-color: #f2f2f2;}
+  
+.products tr:hover {background-color: #ddd;}
+  
+.products th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #663991;
+    color: white;
+}
+
+.products th:first-child{
+    
+    border-radius:10px 0 0 0;
+}
+  
+.products th:last-child{
+    border-radius:0 10px 0 0;
 }
