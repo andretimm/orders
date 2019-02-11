@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 
-//Define Schema
 const OrdersSchema = new mongoose.Schema({
     id: Number,
     customerId: Number,
