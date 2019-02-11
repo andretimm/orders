@@ -1,10 +1,71 @@
 import React, { Component } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faChevronDown, faPlus } from '@fortawesome/free-solid-svg-icons'
 import './Styles.css';
 
 export default class Order extends Component {
+
+    state = {
+        customerSelected: '',
+        productSelected: '',
+        order: '0000',
+        total: '50,00',
+        price: '',
+        multiple: 1,
+        qtd: '',
+        customers: [
+            {
+                id: 1,
+                name: 'teste'
+            },
+            {
+                id: 2,
+                name: 'teste 2'
+            },
+            {
+                id: 3,
+                name: 'teste 3'
+            },
+        ],
+        products: [
+            {
+                id: 1,
+                name: 'TESTE',
+                price: '10',
+                multiple: 1,
+            },
+            {
+                id: 2,
+                name: 'TESTE2',
+                price: '50',
+                multiple: 2,
+            }
+        ]
+    };
+
+    handleChanceCustomer = (event) => {
+        this.setState({ customerSelected: event.target.value });
+    }
+
+    handleChanceProduct = (event) => {
+        this.setState({ productSelected: event.target.value });
+        if (event.target.value !== "") {
+            const { price, multiple } = this.state.products.find((e) => e.id == event.target.value);
+            if(multiple > 1){
+                alert(`Este produto se é vendido em multiplos de ${multiple}. Mas fique tranquilo que fazemos o calculo para você. Ex.:caso você digite 5 vamos multiplicar por ${multiple} resultando em ${multiple*5}`)
+            }
+            this.setState({ price, multiple, qtd: '' });
+        } else {
+            this.setState({ price: '', multiple: 1, qtd: '' });
+        }
+    }
+
+    handleChanceQtd = (event) => {
+        const qtd = event.target.value * this.state.multiple;
+        this.setState({ qtd });
+    }
+
     render() {
         return (
             <div className="content">
@@ -13,50 +74,63 @@ export default class Order extends Component {
                         <div className="order-title">
                             <h2>
                                 Pedido
-                                    <small className="order-number"> #0000</small>
+                                <small className="order-number"> #{this.state.order}</small>
                             </h2>
                         </div>
                         <div class="total-order">
-                            <h2>Total R$50,00</h2>
+                            <h2>Total R${this.state.total}</h2>
                         </div>
                         <hr />
                     </div>
                     <form>
+
                         <div class="input-container">
-                            <input
-                                type="text"
-                                className="input-order-group input-md"
-                                placeholder="Cod. Cliente" />
-                            <div className="icon-container">
-                                <FontAwesomeIcon className="icon" icon={faSearch} />
+                            <div class="select-style">
+                                <select value={this.state.customerSelected} onChange={this.handleChanceCustomer}>
+                                    <option value="">Selecione um cliente</option>
+                                    {this.state.customers.map(customer => (
+                                        <option key={customer.id} value={customer.id}>{customer.name}</option>
+                                    ))}
+                                </select>
                             </div>
-                            <input
-                                type="text"
-                                className="input-order input-lg"
-                                placeholder="Nome Cliente" readOnly tabIndex="-1" />
+                            <div className="icon-container">
+                                <FontAwesomeIcon className="icon" icon={faChevronDown} />
+                            </div>
                         </div>
+
                         <hr className="line" />
+
                         <div class="input-container">
-                            <input
-                                type="text"
-                                className="input-order-group input-md"
-                                placeholder="Cod. Produto" />
-                            <div className="icon-container">
-                                <FontAwesomeIcon className="icon" icon={faSearch} />
+                            <div class="select-style">
+                                <select value={this.state.productSelected} onChange={this.handleChanceProduct}>
+                                    <option value="">Selecione um produto</option>
+                                    {this.state.products.map(product => (
+                                        <option key={product.id} value={product.id}>{product.name}</option>
+                                    ))}
+                                </select>
                             </div>
-                            <input
-                                type="text"
-                                className="input-order input-lg"
-                                placeholder="Produto" readOnly tabIndex="-1" />
+                            <div className="icon-container">
+                                <FontAwesomeIcon className="icon" icon={faChevronDown} />
+                            </div>
+
                             <input
                                 type="text"
                                 className="input-order input-sm"
-                                placeholder="Qtd" />
+                                placeholder="Qtd"
+                                value={this.state.qtd}
+                                onChange={this.handleChanceQtd} />
+
                             <input
                                 type="text"
                                 className="input-order input-md"
-                                placeholder="Preço" />
-                            <button className="btn">Adicionar</button>
+                                placeholder="Preço"
+                                value={this.state.price} />
+
+                            <button className="btn">
+                                <FontAwesomeIcon icon={faPlus} />
+                                &nbsp;Adicionar
+                            </button>
+
                         </div>
 
                         <table>

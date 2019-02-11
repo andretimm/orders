@@ -27,6 +27,9 @@ export default class Navigation extends Component {
         ]
     };
 
+    /**
+     * Altera para ativo a ordem que estiver selecionada
+     */
     handleChanceActive = (e) => {
         e.preventDefault();
         const order =  e.currentTarget.id;

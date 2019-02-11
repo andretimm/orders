@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "src/index.js",
   "repository": "https://github.com/andretimm/orders.git",
-  "author": "<andretimm2012@gmail.com>",
+  "author": "andretimm2012@gmail.com",
   "license": "MIT",
   "dependencies": {
     "cors": "^2.8.5",

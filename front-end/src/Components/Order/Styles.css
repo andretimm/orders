@@ -58,16 +58,6 @@ input[readonly]{
     font-size: 14px;
 }
 
-.input-order-group {
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 5px 0 0 5px;
-    height: 35px;
-    font-size: 14px;
-    padding: 0 10px;
-    outline: none;
-}
-
 .input-container {
     display: -ms-flexbox; /* IE10 */
     display: flex;
@@ -82,6 +72,33 @@ input[readonly]{
     display: flex;
     align-items: center;
 }  
+
+
+.select-style {
+    border: 1px solid #ddd;
+    width: 300px;
+    height: 35px;
+    border-radius: 5px 0 0 5px;
+    overflow: hidden;
+    background: #fff;
+    
+}
+
+.select-style select {
+    padding: 8px 10px;
+    width: 130%;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    background-image: none;
+    -webkit-appearance: none;
+    font-size: 14px;
+    color: #777;
+}
+
+.select-style select:focus {
+    outline: none;
+}
 
 .icon {
     color: white;
