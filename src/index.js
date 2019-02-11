@@ -10,12 +10,12 @@ const app = express();
 const server = require('http').Server(app);
 
 //Conecta banco de dados
-/*mongoose.connect(
-    "mongodb://<>:<>@<>/<>",
+mongoose.connect(
+    "mongodb://orders:orders123@ds331135.mlab.com:31135/orders",
     {
         useNewUrlParser: true
     }
-);*/
+);
 
 //Habilita cross domain
 app.use(cors());

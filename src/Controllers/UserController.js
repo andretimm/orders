@@ -3,7 +3,7 @@ const Users = require('../Models/Users');
 module.exports = {
     //Retorna usuario
     async getUser(req, res) {
-        let email req.body.email;
+        let email = req.body.email;
         const user = await Users.find({ email: email }).sort('-createdAt');
         return res.status(200).json(user);
     },

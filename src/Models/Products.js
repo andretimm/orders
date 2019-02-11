@@ -1,9 +1,11 @@
 const mongoose = require('mongoose');
 
 //Define Schema
-const CustomersSchema = new mongoose.Schema({
+const ProductsSchema = new mongoose.Schema({
     id: Number,
     name: String,
+    price: Number,
+    multiple: Number,
     createdAt: {
         type: Date,
         default: Date.now
@@ -13,4 +15,4 @@ const CustomersSchema = new mongoose.Schema({
   versionKey: false
 });
 
-module.exports = mongoose.model('Customers', CustomersSchema);
+module.exports = mongoose.model('Products', ProductsSchema);
