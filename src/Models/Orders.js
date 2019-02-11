@@ -4,11 +4,13 @@ const mongoose = require('mongoose');
 const OrdersSchema = new mongoose.Schema({
     id: Number,
     customerId: Number,
+    customerName: String,
     total: Number,
     user: String,
     itens: [
         {
             productId: Number,
+            productId: String,
             price: Number,
             qtd: Number,
             status: String,

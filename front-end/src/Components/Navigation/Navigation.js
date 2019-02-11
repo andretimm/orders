@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import api from '../../Services/Api';
+
 import './Styles.css';
 import Header from '../Header/Header';
 
@@ -34,6 +36,10 @@ export default class Navigation extends Component {
         e.preventDefault();
         const order =  e.currentTarget.id;
         this.setState({active: order});
+    }
+
+    componentDidMount(){
+        
     }
 
     render() {

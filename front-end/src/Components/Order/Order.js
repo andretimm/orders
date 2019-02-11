@@ -17,18 +17,14 @@ export default class Order extends Component {
         price: '',
         multiple: 1,
         qtd: '',
-        customers: [
-
-        ],
-        products: [
-
-        ]
+        customers: [],
+        products: []
     };
 
     async componentDidMount() {
         const customers = await api.get('api/customers');
         const products = await api.get('api/products');
-        this.setState({ products :products.data, customers : customers.data });
+        this.setState({ products: products.data, customers: customers.data });
     }
 
     handleChanceCustomer = (event) => {
