@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faChevronDown, faPlus } from '@fortawesome/free-solid-svg-icons'
+
+import api from '../../Services/Api';
+
 import './Styles.css';
 
 export default class Order extends Component {
@@ -15,34 +18,18 @@ export default class Order extends Component {
         multiple: 1,
         qtd: '',
         customers: [
-            {
-                id: 1,
-                name: 'teste'
-            },
-            {
-                id: 2,
-                name: 'teste 2'
-            },
-            {
-                id: 3,
-                name: 'teste 3'
-            },
+
         ],
         products: [
-            {
-                id: 1,
-                name: 'TESTE',
-                price: '10',
-                multiple: 1,
-            },
-            {
-                id: 2,
-                name: 'TESTE2',
-                price: '50',
-                multiple: 2,
-            }
+
         ]
     };
+
+    async componentDidMount() {
+        const customers = await api.get('api/customers');
+        const products = await api.get('api/products');
+        this.setState({ products :products.data, customers : customers.data });
+    }
 
     handleChanceCustomer = (event) => {
         this.setState({ customerSelected: event.target.value });
@@ -52,8 +39,8 @@ export default class Order extends Component {
         this.setState({ productSelected: event.target.value });
         if (event.target.value !== "") {
             const { price, multiple } = this.state.products.find((e) => e.id == event.target.value);
-            if(multiple > 1){
-                alert(`Este produto se é vendido em multiplos de ${multiple}. Mas fique tranquilo que fazemos o calculo para você. Ex.:caso você digite 5 vamos multiplicar por ${multiple} resultando em ${multiple*5}`)
+            if (multiple > 1) {
+                alert(`Este produto se é vendido em multiplos de ${multiple}. Mas fique tranquilo que fazemos o calculo para você. Ex.:caso você digite 5 vamos multiplicar por ${multiple} resultando em ${multiple * 5}`)
             }
             this.setState({ price, multiple, qtd: '' });
         } else {

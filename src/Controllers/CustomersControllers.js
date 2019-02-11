@@ -3,7 +3,7 @@ const Customers = require('../Models/Customers');
 module.exports = {
     //Retorna clientes
     async getCustomer(req, res) {
-        const customer = await Customers.find({}).sort('-createdAt');
+        const customer = await Customers.find({}).sort('+createdAt');
         return res.status(200).json(customer);
     },
     //Cria cliente
