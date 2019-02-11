@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
+
 import api from '../../Services/Api';
 
 import './Styles.css';
@@ -18,15 +21,18 @@ export default class Navigation extends Component {
     handleChangeActive = (e) => {
         e.preventDefault();
         const order = e.currentTarget.id;
-        console.log(order);
-        this.setState({ active: order });
-        console.log();
-        this.props.onSelectOrder(this.state.orders.find((e) => e.id == order));
+        if (order === "new") {
+            this.setState({ active: '' });
+            this.props.onSelectOrder({});
+        } else {
+            this.setState({ active: order });
+            this.props.onSelectOrder(this.state.orders.find((e) => e.id == order));
+        }
     }
 
     async componentDidMount() {
         const orders = await api.get("api/orders");
-        this.setState({orders : orders.data});
+        this.setState({ orders: orders.data });
     }
 
     render() {
@@ -34,8 +40,17 @@ export default class Navigation extends Component {
             <nav>
                 <ul>
                     <li><Header /></li>
+                    <li>
+                        <a
+                            href="#customer"
+                            id="new"
+                            onClick={this.handleChangeActive}
+                            className="new-order">
+                            <FontAwesomeIcon icon={faPlus} /> Criar novo pedido
+                        </a>
+                    </li>
                     {this.state.orders.map(order => (
-                        <li>
+                        <li className="orders">
                             <a
                                 href="#customer"
                                 id={order.id}

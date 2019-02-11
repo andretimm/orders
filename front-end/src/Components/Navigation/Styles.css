@@ -26,3 +26,12 @@ li a:hover:not(.active) {
     background-color: #3b3342;
     color: white;
 }
+
+.new-order{
+    background-color: #00cc62;
+    color: #fff;
+    font-size: 18px;
+    padding: 18px;
+    font-weight: bold;
+    text-align: center;
+}

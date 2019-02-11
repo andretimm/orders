@@ -39,6 +39,11 @@ export default class Order extends Component {
             this.setState({
                 products,
                 customers,
+                customerSelected: '',
+                total:'0',
+                order: '0000',
+                itens: [],
+                edit: true
             });
         } else {
             const { id, customerId, total, itens } = this.props.order;
