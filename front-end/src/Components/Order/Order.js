@@ -1,11 +1,23 @@
 import React, { Component } from 'react';
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faChevronDown, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown, faPlus } from '@fortawesome/free-solid-svg-icons';
+import MaskedInput from 'react-text-mask';
+import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 
 import api from '../../Services/Api';
 
 import './Styles.css';
+
+/**
+ * Formata valor em reais
+ */
+const numberMask = createNumberMask({
+    prefix: '',
+    thousandsSeparatorSymbol: '.',
+    allowDecimal: true,
+    decimalSymbol: ','
+});
 
 export default class Order extends Component {
 
@@ -40,7 +52,7 @@ export default class Order extends Component {
                 products,
                 customers,
                 customerSelected: '',
-                total:'0',
+                total: '0',
                 order: '0000',
                 itens: [],
                 edit: true
@@ -91,6 +103,11 @@ export default class Order extends Component {
     handleChangeQtd = (event) => {
         const qtd = event.target.value;
         this.setState({ qtd });
+    }
+
+    handleChangePrice = (event) => {
+        let price = event.target.value;
+        this.setState({ price });
     }
 
     handleBlurQtd = (event) => {
@@ -155,11 +172,13 @@ export default class Order extends Component {
                                 onBlur={this.handleBlurQtd}
                                 onChange={this.handleChangeQtd} />
 
-                            <input
-                                type="text"
+                            <MaskedInput
                                 className="input-order input-md"
                                 placeholder="Preço"
-                                value={this.state.price} />
+                                mask={numberMask}
+                                value={this.state.price}
+                                onChange={this.handleChangePrice}
+                            />
 
                             <button className="btn">
                                 <FontAwesomeIcon icon={faPlus} />

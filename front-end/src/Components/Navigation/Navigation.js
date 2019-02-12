@@ -16,7 +16,7 @@ export default class Navigation extends Component {
     };
 
     /**
-     * Altera para ativo a ordem que estiver selecionada
+     * Altera para ativo o pedido que estiver selecionada
      */
     handleChangeActive = (e) => {
         e.preventDefault();
