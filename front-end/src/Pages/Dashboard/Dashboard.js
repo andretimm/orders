@@ -11,16 +11,14 @@ export default class Dashboard extends Component {
     };
 
     handleSelectOrder = (order) => {
-        this.setState({ order })
-        console.log(order);
-        console.log(this.state.order);
+        this.setState({ order });
     }
 
     render() {
         return (
             <div className="dash-wrapper">
                 <Navigation onSelectOrder={order => this.handleSelectOrder(order)} />
-                <Order order={this.state.order} />
+                <Order order={this.state.order} onSelectOrder={order => this.handleSelectOrder(order)} />
             </div>
         );
     }

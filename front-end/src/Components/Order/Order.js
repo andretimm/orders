@@ -243,7 +243,7 @@ export default class Order extends Component {
         };
 
         await api.post('api/orders', newOrder);
-
+        this.props.onSelectOrder({});
         this.handleStart();
     }
 

@@ -41,13 +41,13 @@ export default class Navigation extends Component {
     subscribeToEvents = () => {
         const io = socket('http://localhost:3006');
         io.on('newOrder', data => {
-            let orders = this.state.orders;
+            let { orders } = this.state;
             orders.push(data);
-            console.log("newOrder");
-            console.log(data);
-            console.log(this.state.orders);
-            console.log(orders);
-            this.setState({ orders });
+            this.setState({ orders, active: '' });
+        });
+        io.on('updateOrder', data => {
+            const { orders } = this.state;
+            this.setState({ orders: orders.map(order => order.id === data.id ? data : order), active: '' });
         });
     }
 

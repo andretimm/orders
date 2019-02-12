@@ -6,18 +6,29 @@ module.exports = {
         const order = await Orders.find({}).sort('+createdAt');
         return res.status(200).json(order);
     },
-     //Retorna ultimo id
-     async getOrderId(req, res) {
-        const order = await Orders.findOne({}, ['id']).sort({'id' : -1});
+    //Retorna ultimo id
+    async getOrderId(req, res) {
+        const order = await Orders.findOne({}, ['id']).sort({ 'id': -1 });
         return res.status(200).json(order);
     },
     //Cria pedidos
     async setOrder(req, res) {
-        const order = await Orders.create(req.body);
-
-        //Dispara evento enviando novo pedido criado
-        req.io.emit('newOrder', order);
-
-        return res.status(201).json(order);
+        const { id } = req.body;
+        let retorno = '';
+        const order = await Orders.findOne({ id });
+        if (order) {
+            //Atualiza pedido
+            order.set(req.body);
+            retorno = await order.save();
+            //Dispara evento enviando o pedido atualizado
+            req.io.emit('updateOrder', retorno);
+        } else {
+            //Crianovo pedido
+            const newOrder = await Orders.create(req.body);
+            //Dispara evento enviando novo pedido criado
+            req.io.emit('newOrder', newOrder);
+            retorno = newOrder;
+        }
+        return res.status(201).json(retorno);
     },
 };
