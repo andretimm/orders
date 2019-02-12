@@ -4,13 +4,13 @@ const OrdersSchema = new mongoose.Schema({
     id: Number,
     customerId: Number,
     customerName: String,
-    total: Number,
+    total: String,
     user: String,
     itens: [
         {
             productId: Number,
             productName: String,
-            price: Number,
+            price: String,
             qtd: Number,
             status: String,
         }

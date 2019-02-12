@@ -52,10 +52,15 @@ export default class Order extends Component {
                 products,
                 customers,
                 customerSelected: '',
-                total: '0',
-                order: '0000',
+                productSelected: '',
+                order: '',
+                total: '00,00',
+                price: '',
+                multiple: 1,
+                qtd: '',
+                info: '',
                 itens: [],
-                edit: true
+                edit: true,
             });
         } else {
             const { id, customerId, total, itens } = this.props.order;
@@ -64,19 +69,22 @@ export default class Order extends Component {
                 customers,
                 customerSelected: customerId,
                 total,
-                order: id,
+                order: '#' + id,
                 itens,
-                edit: false
+                edit: false,
+                multiple: 1,
+                qtd: '',
+                info: '',
+                productSelected: '',
+                price: '',
             });
         }
     }
 
     //Atualiza o componente sempre que selecionar outro pedido
     componentWillReceiveProps(props) {
-        console.log("refesh");
         const { order } = this.props;
         if (props.order !== order) {
-            console.log("refesh");
             this.handleStart();
         }
     }
@@ -94,7 +102,7 @@ export default class Order extends Component {
             } else {
                 this.setState({ info: '' });
             }
-            this.setState({ price, multiple, qtd: '' });
+            this.setState({ price: price.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.'), multiple, qtd: '' });
         } else {
             this.setState({ price: '', multiple: 1, qtd: '' });
         }
@@ -112,10 +120,64 @@ export default class Order extends Component {
 
     handleBlurQtd = (event) => {
         let qtd = event.target.value;
-        if (event.target.value % this.state.multiple != 0) {
+        if (event.target.value % this.state.multiple !== 0) {
             qtd = qtd * this.state.multiple;
         }
         this.setState({ qtd });
+    }
+
+    handlerAddItem = (e) => {
+        e.preventDefault();
+        let {
+            customerSelected,
+            productSelected,
+            total,
+            price,
+            qtd,
+            itens
+        } = this.state;
+        if (customerSelected === '') {
+            console.log('selecione um cliente');
+            return;
+        }
+        if (productSelected === '') {
+            console.log('selecione um produto');
+            return;
+        }
+        if (qtd === '') {
+            console.log('selecione a qtd');
+            return;
+        }
+        if (price === '') {
+            console.log('selecione o preço');
+            return;
+        }
+
+        console.log(price);
+        console.log(total);
+        console.log(total.replace(/\./g, '').replace(',', '.'));
+        console.log(parseFloat(price.replace(".", '').replace(',', '.') * Number(qtd)));
+
+        total = parseFloat(total.replace(/\./g, '').replace(',', '.')) + (parseFloat(price.replace(/\./g, '').replace(',', '.') * Number(qtd)));
+        console.log(total);
+        total = total.toFixed(2).replace(/\./g, ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+
+        this.setState({
+            total,
+            itens: [...itens, {
+                productId: productSelected,
+                productName: "teste 2",
+                price: price,
+                qtd: qtd,
+                status: "b"
+            }]
+        });
+    }
+
+    sumTotalItem = (price, qtd) => {
+        let total = (parseFloat(price.replace(".", '').replace(',', '.') * Number(qtd)));
+        total = total.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+        return total;
     }
 
     render() {
@@ -126,7 +188,7 @@ export default class Order extends Component {
                         <div className="order-title">
                             <h2>
                                 Pedido
-                                <small className="order-number"> #{this.state.order}</small>
+                                <small className="order-number"> {this.state.order}</small>
                             </h2>
                         </div>
                         <div class="total-order">
@@ -180,7 +242,7 @@ export default class Order extends Component {
                                 onChange={this.handleChangePrice}
                             />
 
-                            <button className="btn">
+                            <button className="btn" onClick={this.handlerAddItem}>
                                 <FontAwesomeIcon icon={faPlus} />
                                 &nbsp;Adicionar
                             </button>
@@ -206,7 +268,7 @@ export default class Order extends Component {
                                     <td>{item.productName}</td>
                                     <td>{item.qtd}</td>
                                     <td>{item.price}</td>
-                                    <td>{item.price * item.qtd}</td>
+                                    <td>{this.sumTotalItem(item.price, item.qtd)}</td>
                                     <td>{item.status}</td>
                                     <td className={this.state.edit ? 'td-center' : 'hidden'}>
                                         <button className="btn-remove">
