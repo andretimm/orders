@@ -11,6 +11,12 @@ module.exports = {
         const order = await Orders.findOne({}, ['id']).sort({ 'id': -1 });
         return res.status(200).json(order);
     },
+    //Retorna ultimo id
+    async getProductId(req, res) {
+        let order = await Orders.findOne({ id: req.params.id }, ['itens.id']).sort({ 'id': -1 });
+        order = order.itens.reduce((prev, current) => (prev.id > current.id) ? prev : current);
+        return res.status(200).json(order);
+    },
     //Cria pedidos
     async setOrder(req, res) {
         const { id } = req.body;

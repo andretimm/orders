@@ -13,11 +13,16 @@ import './Styles.css';
 /**
  * Formata valor em reais
  */
-const numberMask = createNumberMask({
+const moneyMask = createNumberMask({
     prefix: '',
     thousandsSeparatorSymbol: '.',
     allowDecimal: true,
     decimalSymbol: ','
+});
+const numberMask = createNumberMask({
+    prefix: '',
+    includeThousandsSeparator: false,
+    allowDecimal: false
 });
 
 export default class Order extends Component {
@@ -54,6 +59,52 @@ export default class Order extends Component {
         });
     }
 
+    /**
+     * 1 - Adionar item
+     * 2 - Salvar pedido
+     */
+    formValidation = (action) => {
+        let {
+            customerSelected,
+            productSelected,
+            price,
+            qtd,
+            itens
+        } = this.state;
+        if (action === 1) {
+            if (customerSelected === '') {
+                alert("Cliente não informado");
+                return false;
+            }
+            if (productSelected === '') {
+                alert("Produto não informado");
+                return false;
+            }
+            if (qtd === '') {
+                alert("Quantidade não informada");
+                return false;
+            }
+            if (price === '') {
+                alert("Preço não informado");
+                return false;
+            }
+            if (Number(qtd) <= 0) {
+                alert("Quantidade deve ser maior que zero");
+                return false;
+            }
+        } else if (action === 2) {
+            if (customerSelected === '') {
+                alert("Cliente não informado");
+                return false;
+            }
+            if (itens.length === 0) {
+                alert("Para salvar o pedido é necessário ter ao menos 1 (um) item incluído.");
+                return false;
+            }
+        }
+        return true;
+    }
+
     getLastOrderID = async () => {
         let lastId = await api.get('api/lastorder');
         lastId = lastId.data.id + 1;
@@ -81,10 +132,13 @@ export default class Order extends Component {
                 info: '',
                 itens: [],
                 edit: true,
-                selectedCustomer: false
+                selectedCustomer: false,
+                itemIDs: 0,
             });
         } else {
             const { id, customerId, total, itens } = this.props.order;
+            let productIndex = await api.get('/api/lastproduct/' + id);
+            productIndex = productIndex.data.id;
             this.setState({
                 products,
                 customers,
@@ -99,6 +153,7 @@ export default class Order extends Component {
                 productSelected: '',
                 price: '',
                 selectedCustomer: true,
+                itemIDs: productIndex++
             });
         }
     }
@@ -126,7 +181,7 @@ export default class Order extends Component {
         if (event.target.value !== "") {
             const { price, multiple } = this.state.products.find((e) => e.id == event.target.value);
             if (multiple > 1) {
-                this.setState({ info: `Este produto apenas é vendido em multiplos de ${multiple}. Mas fique tranquilo que fazemos o calculo para você. Ex.:caso você digite 5 vamos multiplicar por ${multiple} resultando em ${multiple * 5}` });
+                this.setState({ info: `Este produto apenas é vendido em multiplos de ${multiple}. Mas fique tranquilo que fazemos o calculo para você. Ex.: Caso você digite 5 vamos multiplicar por ${multiple} resultando em ${multiple * 5}` });
             } else {
                 this.setState({ info: '' });
             }
@@ -157,7 +212,6 @@ export default class Order extends Component {
     handlerAddItem = (e) => {
         e.preventDefault();
         let {
-            customerSelected,
             productSelected,
             total,
             price,
@@ -165,22 +219,9 @@ export default class Order extends Component {
             itens,
             itemIDs
         } = this.state;
-        if (customerSelected === '') {
-            console.log('selecione um cliente');
-            return;
-        }
-        if (productSelected === '') {
-            console.log('selecione um produto');
-            return;
-        }
-        if (qtd === '') {
-            console.log('selecione a qtd');
-            return;
-        }
-        if (price === '') {
-            console.log('selecione o preço');
-            return;
-        }
+
+        //Validação de campos
+        if (!this.formValidation(1)) return;
 
         const { name } = this.state.products.find((e) => e.id === Number(productSelected));
 
@@ -221,7 +262,6 @@ export default class Order extends Component {
         } else {
             this.setState({ itens, total });
         }
-
     }
 
     handleEdit = (e) => {
@@ -231,6 +271,9 @@ export default class Order extends Component {
 
     handleSaveOrder = async (e) => {
         e.preventDefault();
+        //Validação de campos
+        if (!this.formValidation(2)) return;
+
         const { customerSelected, total, itens, order } = this.state;
         const { name } = this.state.customers.find((e) => e.id == customerSelected);
         const newOrder = {
@@ -305,18 +348,18 @@ export default class Order extends Component {
                                 <FontAwesomeIcon className="icon" icon={faChevronDown} />
                             </div>
 
-                            <input
-                                type="text"
+                            <MaskedInput
                                 className="input-order input-sm"
                                 placeholder="Qtd"
+                                mask={numberMask}
                                 value={this.state.qtd}
                                 onBlur={this.handleBlurQtd}
-                                onChange={this.handleChangeQtd} />
-
+                                onChange={this.handleChangeQtd}
+                            />
                             <MaskedInput
                                 className="input-order input-md"
                                 placeholder="Preço"
-                                mask={numberMask}
+                                mask={moneyMask}
                                 value={this.state.price}
                                 onChange={this.handleChangePrice}
                             />

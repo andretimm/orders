@@ -26,6 +26,8 @@ routes.get('/api/customers', CustomersControllers.getCustomer);
 routes.get('/api/orders', OrderController.getOrder);
 //Rotorna ultimo id 
 routes.get('/api/lastorder', OrderController.getOrderId);
+//Rotorna ultimo id 
+routes.get('/api/lastproduct/:id', OrderController.getProductId);
 
 //Exporta rotas
 module.exports = routes;
