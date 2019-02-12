@@ -16,12 +16,16 @@ routes.post('/api/createUser', UserController.setUser);
 routes.post('/api/orders', OrderController.setOrder);
 
 
+
+
 //Retorna produtos
 routes.get('/api/products', ProductController.getProduct);
 //Retorna clientes
 routes.get('/api/customers', CustomersControllers.getCustomer);
 //Retornar Ordens
 routes.get('/api/orders', OrderController.getOrder);
+//Rotorna ultimo id 
+routes.get('/api/lastorder', OrderController.getOrderId);
 
 //Exporta rotas
 module.exports = routes;

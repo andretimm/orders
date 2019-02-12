@@ -8,6 +8,8 @@ const app = express();
 
 //Extrair servidor http
 const server = require('http').Server(app);
+//Habilita comunicacao via websocket
+const io = require('socket.io')(server);
 
 //Conecta banco de dados
 mongoose.connect(
@@ -16,6 +18,12 @@ mongoose.connect(
         useNewUrlParser: true
     }
 );
+
+//Disponibiliza o websocket para todas as requisicoes
+app.use((req, res, next) => {
+    req.io = io;
+    return next();
+})
 
 //Habilita cross domain
 app.use(cors());

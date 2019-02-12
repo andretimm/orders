@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown, faPlus, faSave, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import MaskedInput from 'react-text-mask';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
+import socket from 'socket.io-client';
 
 import api from '../../Services/Api';
 
@@ -24,8 +25,8 @@ export default class Order extends Component {
     state = {
         customerSelected: '',
         productSelected: '',
-        order: '0000',
-        total: '50,00',
+        order: '',
+        total: '0,00',
         price: '',
         multiple: 1,
         qtd: '',
@@ -40,6 +41,23 @@ export default class Order extends Component {
 
     componentDidMount() {
         this.handleStart();
+        this.subscribeToEvents();
+    }
+
+    //Inicia comunicação o servidor socket e fica escutando o evento
+    subscribeToEvents = () => {
+        const io = socket('http://localhost:3006');
+        io.on('newOrder', data => {
+            if (this.state.edit) {
+                this.getLastOrderID();
+            }
+        });
+    }
+
+    getLastOrderID = async () => {
+        let lastId = await api.get('api/lastorder');
+        lastId = lastId.data.id + 1;
+        this.setState({ order: lastId });
     }
 
     handleStart = async () => {
@@ -50,13 +68,13 @@ export default class Order extends Component {
         products = products.data
         customers = customers.data;
         if (!this.props.order.id) {
+            this.getLastOrderID();
             this.setState({
                 products,
                 customers,
                 customerSelected: '',
                 productSelected: '',
-                order: '',
-                total: '00,00',
+                total: '0,00',
                 price: '',
                 multiple: 1,
                 qtd: '',
@@ -72,7 +90,7 @@ export default class Order extends Component {
                 customers,
                 customerSelected: customerId,
                 total,
-                order: '#' + id,
+                order: id,
                 itens,
                 edit: false,
                 multiple: 1,
@@ -91,6 +109,12 @@ export default class Order extends Component {
         if (props.order !== order) {
             this.handleStart();
         }
+    }
+
+    sumTotalItem = (price, qtd) => {
+        let total = (parseFloat(price.replace(/\./g, '').replace(',', '.') * Number(qtd)));
+        total = total.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+        return total;
     }
 
     handleChangeCustomer = (event) => {
@@ -158,18 +182,18 @@ export default class Order extends Component {
             return;
         }
 
+        const { name } = this.state.products.find((e) => e.id === Number(productSelected));
 
         total = parseFloat(total.replace(/\./g, '').replace(',', '.')) + (parseFloat(price.replace(/\./g, '').replace(',', '.') * Number(qtd)));
         total = total.toFixed(2).replace(/\./g, ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
         itemIDs++;
-        console.log(itemIDs);
         this.setState({
             total,
             itemIDs,
             itens: [...itens, {
                 id: itemIDs,
-                productId: productSelected,
-                productName: "teste 2",
+                productId: Number(productSelected),
+                productName: name,
                 price: price,
                 qtd: qtd,
                 status: "b"
@@ -179,12 +203,6 @@ export default class Order extends Component {
             price: '',
             qtd: ''
         });
-    }
-
-    sumTotalItem = (price, qtd) => {
-        let total = (parseFloat(price.replace(/\./g, '').replace(',', '.') * Number(qtd)));
-        total = total.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
-        return total;
     }
 
     handleRemoveItem = (e, id) => {
@@ -211,6 +229,24 @@ export default class Order extends Component {
         this.setState({ edit: true });
     }
 
+    handleSaveOrder = async (e) => {
+        e.preventDefault();
+        const { customerSelected, total, itens, order } = this.state;
+        const { name } = this.state.customers.find((e) => e.id == customerSelected);
+        const newOrder = {
+            id: order,
+            customerId: customerSelected,
+            customerName: name,
+            total,
+            user: '',
+            itens
+        };
+
+        await api.post('api/orders', newOrder);
+
+        this.handleStart();
+    }
+
     render() {
         return (
             <div className="content">
@@ -219,10 +255,10 @@ export default class Order extends Component {
                         <div className="order-title">
                             <h2>
                                 Pedido
-                                <small className="order-number"> {this.state.order}</small>
+                                <small className="order-number"> #{this.state.order}</small>
                             </h2>
                         </div>
-                        <div class="total-order">
+                        <div className="total-order">
                             <h2>Total R${this.state.total}</h2>
                         </div>
                         <hr />
@@ -230,7 +266,7 @@ export default class Order extends Component {
                     <form>
                         <div className=" order-customer">
                             <div className="input-container">
-                                <div class="select-style">
+                                <div className="select-style">
                                     <select value={this.state.customerSelected} onChange={this.handleChangeCustomer} readonly={this.state.selectedCustomer ? 'true' : 'false'}>
                                         <option value="">Selecione um cliente</option>
                                         {this.state.customers.map(customer => (
@@ -244,7 +280,7 @@ export default class Order extends Component {
                             </div>
                         </div>
                         <div className={this.state.edit ? 'order-save' : 'hidden'}>
-                            <button className="btn-save">
+                            <button className="btn-save" onClick={this.handleSaveOrder}>
                                 <FontAwesomeIcon icon={faSave} /> Salvar
                             </button>
                         </div>
@@ -257,7 +293,7 @@ export default class Order extends Component {
                         <hr className="line" />
 
                         <div className={this.state.edit ? 'input-container' : 'hidden'} >
-                            <div class="select-style">
+                            <div className="select-style">
                                 <select value={this.state.productSelected} onChange={this.handleChangeProduct}>
                                     <option value="">Selecione um produto</option>
                                     {this.state.products.map(product => (
@@ -298,28 +334,32 @@ export default class Order extends Component {
                         </div>
 
                         <table className="products">
-                            <tr className="firstRow">
-                                <th>Produto</th>
-                                <th>Quantidade</th>
-                                <th>Preço</th>
-                                <th>Total</th>
-                                <th>Status</th>
-                                <th className={this.state.edit ? '' : 'hidden'}></th>
-                            </tr>
-                            {this.state.itens.map(item => (
-                                <tr key={item.id}>
-                                    <td>{item.productName}</td>
-                                    <td>{item.qtd}</td>
-                                    <td>{item.price}</td>
-                                    <td>{this.sumTotalItem(item.price, item.qtd)}</td>
-                                    <td>{item.status}</td>
-                                    <td className={this.state.edit ? 'td-center' : 'hidden'}>
-                                        <button className="btn-remove" onClick={(e) => this.handleRemoveItem(e, item.id)}>
-                                            <FontAwesomeIcon icon={faTrash} />
-                                        </button>
-                                    </td>
+                            <thead>
+                                <tr className="firstRow">
+                                    <th>Produto</th>
+                                    <th>Quantidade</th>
+                                    <th>Preço</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th className={this.state.edit ? '' : 'hidden'}></th>
                                 </tr>
-                            ))}
+                            </thead>
+                            <tbody>
+                                {this.state.itens.map(item => (
+                                    <tr key={item.id}>
+                                        <td>{item.productName}</td>
+                                        <td>{item.qtd}</td>
+                                        <td>{item.price}</td>
+                                        <td>{this.sumTotalItem(item.price, item.qtd)}</td>
+                                        <td>{item.status}</td>
+                                        <td className={this.state.edit ? 'td-center' : 'hidden'}>
+                                            <button className="btn-remove" onClick={(e) => this.handleRemoveItem(e, item.id)}>
+                                                <FontAwesomeIcon icon={faTrash} />
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
                         </table>
                     </form>
                 </div>

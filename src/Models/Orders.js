@@ -8,6 +8,7 @@ const OrdersSchema = new mongoose.Schema({
     user: String,
     itens: [
         {
+            id: Number,
             productId: Number,
             productName: String,
             price: String,

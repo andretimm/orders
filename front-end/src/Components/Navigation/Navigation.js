@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import socket from 'socket.io-client';
 
 import api from '../../Services/Api';
 
@@ -31,8 +32,23 @@ export default class Navigation extends Component {
     }
 
     async componentDidMount() {
+        this.subscribeToEvents();
         const orders = await api.get("api/orders");
         this.setState({ orders: orders.data });
+    }
+
+    //Inicia comunicação o servidor socket e fica escutando o evento
+    subscribeToEvents = () => {
+        const io = socket('http://localhost:3006');
+        io.on('newOrder', data => {
+            let orders = this.state.orders;
+            orders.push(data);
+            console.log("newOrder");
+            console.log(data);
+            console.log(this.state.orders);
+            console.log(orders);
+            this.setState({ orders });
+        });
     }
 
     render() {
@@ -50,13 +66,13 @@ export default class Navigation extends Component {
                         </a>
                     </li>
                     {this.state.orders.map(order => (
-                        <li className="orders">
+                        <li className="orders" key={order._id}>
                             <a
                                 href="#customer"
                                 id={order.id}
                                 onClick={this.handleChangeActive}
                                 className={order.id == this.state.active ? 'active' : ''}
-                                key={order._id}>
+                            >
                                 #{order.id} - {order.customerName}
                             </a>
                         </li>
