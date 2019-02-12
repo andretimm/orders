@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faPlus, faSave } from '@fortawesome/free-solid-svg-icons';
 import MaskedInput from 'react-text-mask';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 
@@ -34,6 +34,8 @@ export default class Order extends Component {
         products: [],
         itens: [],
         edit: true,
+        selectedCustomer: false,
+        itemIDs: 0,
     };
 
     componentDidMount() {
@@ -61,6 +63,7 @@ export default class Order extends Component {
                 info: '',
                 itens: [],
                 edit: true,
+                selectedCustomer: false
             });
         } else {
             const { id, customerId, total, itens } = this.props.order;
@@ -77,6 +80,7 @@ export default class Order extends Component {
                 info: '',
                 productSelected: '',
                 price: '',
+                selectedCustomer: true,
             });
         }
     }
@@ -134,7 +138,8 @@ export default class Order extends Component {
             total,
             price,
             qtd,
-            itens
+            itens,
+            itemIDs
         } = this.state;
         if (customerSelected === '') {
             console.log('selecione um cliente');
@@ -153,31 +158,52 @@ export default class Order extends Component {
             return;
         }
 
-        console.log(price);
-        console.log(total);
-        console.log(total.replace(/\./g, '').replace(',', '.'));
-        console.log(parseFloat(price.replace(".", '').replace(',', '.') * Number(qtd)));
 
         total = parseFloat(total.replace(/\./g, '').replace(',', '.')) + (parseFloat(price.replace(/\./g, '').replace(',', '.') * Number(qtd)));
-        console.log(total);
         total = total.toFixed(2).replace(/\./g, ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
-
+        itemIDs++;
+        console.log(itemIDs);
         this.setState({
             total,
+            itemIDs,
             itens: [...itens, {
+                id: itemIDs,
                 productId: productSelected,
                 productName: "teste 2",
                 price: price,
                 qtd: qtd,
                 status: "b"
-            }]
+            }],
+            selectedCustomer: true,
+            productSelected: '',
+            price: '',
+            qtd: ''
         });
     }
 
     sumTotalItem = (price, qtd) => {
-        let total = (parseFloat(price.replace(".", '').replace(',', '.') * Number(qtd)));
+        let total = (parseFloat(price.replace(/\./g, '').replace(',', '.') * Number(qtd)));
         total = total.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
         return total;
+    }
+
+    handleRemoveItem = (e, id) => {
+        e.preventDefault();
+        let { itens, total } = this.state;
+        const index = itens.map(item => item.id).indexOf(id);
+        if (index == "-1") {
+            return;
+        }
+        const totalItem = this.sumTotalItem(itens[index].price, itens[index].qtd)
+        total = parseFloat(total.replace(/\./g, '').replace(',', '.')) - (parseFloat(totalItem.replace(/\./g, '').replace(',', '.')));
+        total = total.toFixed(2).replace(/\./g, ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
+        itens.splice(index, 1);
+        if (total === '0,00') {
+            this.setState({ itens, total, selectedCustomer: false });
+        } else {
+            this.setState({ itens, total });
+        }
+
     }
 
     render() {
@@ -197,18 +223,25 @@ export default class Order extends Component {
                         <hr />
                     </div>
                     <form>
-                        <div className="input-container">
-                            <div class="select-style">
-                                <select value={this.state.customerSelected} onChange={this.handleChangeCustomer}>
-                                    <option value="">Selecione um cliente</option>
-                                    {this.state.customers.map(customer => (
-                                        <option key={customer.id} value={customer.id}>{customer.name}</option>
-                                    ))}
-                                </select>
+                        <div className=" order-customer">
+                            <div className="input-container">
+                                <div class="select-style">
+                                    <select value={this.state.customerSelected} onChange={this.handleChangeCustomer} readonly={this.state.selectedCustomer ? 'true' : 'false'}>
+                                        <option value="">Selecione um cliente</option>
+                                        {this.state.customers.map(customer => (
+                                            <option key={customer.id} value={customer.id}>{customer.name}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="icon-container">
+                                    <FontAwesomeIcon className="icon" icon={faChevronDown} />
+                                </div>
                             </div>
-                            <div className="icon-container">
-                                <FontAwesomeIcon className="icon" icon={faChevronDown} />
-                            </div>
+                        </div>
+                        <div className={this.state.edit ? 'order-save' : 'hidden'}>
+                            <button className="btn-save">
+                                <FontAwesomeIcon icon={faSave} /> Salvar
+                            </button>
                         </div>
 
                         <hr className="line" />
@@ -271,7 +304,7 @@ export default class Order extends Component {
                                     <td>{this.sumTotalItem(item.price, item.qtd)}</td>
                                     <td>{item.status}</td>
                                     <td className={this.state.edit ? 'td-center' : 'hidden'}>
-                                        <button className="btn-remove">
+                                        <button className="btn-remove" onClick={(e) => this.handleRemoveItem(e, item.id)}>
                                             X
                                      </button>
                                     </td>
