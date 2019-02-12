@@ -57,6 +57,19 @@
     font-size: 16px; 
 }
 
+.btn-edit{
+    margin: 10px;
+    background: #e65c00;
+    border-radius: 5px;
+    height: 35px;
+    width: 120px;
+    border: 0;
+    color: #fff;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;  
+}
+
 .total-order{
     width: 50%;
     float:right;

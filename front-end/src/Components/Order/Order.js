@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faPlus, faSave } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faPlus, faSave, faEdit } from '@fortawesome/free-solid-svg-icons';
 import MaskedInput from 'react-text-mask';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 
@@ -46,10 +46,10 @@ export default class Order extends Component {
         let customers = [];
         let products = [];
         customers = await api.get('api/customers');
+        products = await api.get('api/products');
+        products = products.data
         customers = customers.data;
         if (!this.props.order.id) {
-            products = await api.get('api/products');
-            products = products.data
             this.setState({
                 products,
                 customers,
@@ -206,6 +206,11 @@ export default class Order extends Component {
 
     }
 
+    handleEdit = (e) => {
+        e.preventDefault();
+        this.setState({ edit: true });
+    }
+
     render() {
         return (
             <div className="content">
@@ -241,6 +246,11 @@ export default class Order extends Component {
                         <div className={this.state.edit ? 'order-save' : 'hidden'}>
                             <button className="btn-save">
                                 <FontAwesomeIcon icon={faSave} /> Salvar
+                            </button>
+                        </div>
+                        <div className={!this.state.edit ? 'order-save' : 'hidden'}>
+                            <button className="btn-edit" onClick={this.handleEdit}>
+                                <FontAwesomeIcon icon={faEdit} /> Editar
                             </button>
                         </div>
 
