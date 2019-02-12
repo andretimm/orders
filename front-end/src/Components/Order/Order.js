@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faPlus, faSave, faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faPlus, faSave, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import MaskedInput from 'react-text-mask';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 
@@ -315,8 +315,8 @@ export default class Order extends Component {
                                     <td>{item.status}</td>
                                     <td className={this.state.edit ? 'td-center' : 'hidden'}>
                                         <button className="btn-remove" onClick={(e) => this.handleRemoveItem(e, item.id)}>
-                                            X
-                                     </button>
+                                            <FontAwesomeIcon icon={faTrash} />
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
