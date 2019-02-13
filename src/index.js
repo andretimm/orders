@@ -36,7 +36,7 @@ app.use(express.json());
 app.use(require('./routes'));
 
 //Inicia aplicacao
-server.listen(5000, () => {
+server.listen(80, () => {
     console.log('Server iniciado na porta 3006');
 });
 
