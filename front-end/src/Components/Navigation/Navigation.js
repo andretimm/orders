@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import socket from 'socket.io-client';
+import Loader from 'react-loader-spinner';
 
 import api from '../../Services/Api';
 
@@ -13,7 +14,8 @@ export default class Navigation extends Component {
 
     state = {
         active: '',
-        orders: []
+        orders: [],
+        loaded: false
     };
 
     /**
@@ -34,7 +36,7 @@ export default class Navigation extends Component {
     async componentDidMount() {
         this.subscribeToEvents();
         const orders = await api.get("api/orders");
-        this.setState({ orders: orders.data });
+        this.setState({ orders: orders.data, loaded: true });
     }
 
     //Inicia comunicação o servidor socket e fica escutando o evento
@@ -52,6 +54,37 @@ export default class Navigation extends Component {
     }
 
     render() {
+        const { loaded } = this.state;
+
+        if (!loaded) {
+            return (
+                <nav>
+                    <ul>
+                        <li><Header /></li>
+                        <li>
+                            <a
+                                href="#customer"
+                                id="new"
+                                onClick={this.handleChangeActive}
+                                className="new-order">
+                                <FontAwesomeIcon icon={faPlus} /> Criar novo pedido
+                        </a>
+                        </li>
+                        <li className="loader-content-nav">
+                            <div className="loader-nav">
+                                <Loader
+                                    type="Puff"
+                                    color="#FFF"
+                                    height="100px"
+                                    width="100px"
+                                />
+                            </div>
+
+                        </li>
+                    </ul>
+                </nav>
+            );
+        }
         return (
             <nav>
                 <ul>

@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSave, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { withAlert } from "react-alert";
+import Loader from 'react-loader-spinner';
 import MaskedInput from 'react-text-mask';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 import socket from 'socket.io-client';
@@ -43,11 +44,13 @@ class Order extends Component {
         edit: true,
         selectedCustomer: false,
         itemIDs: 0,
+        errorQtd: false,
+        loaded: false,
+        status: '',
     };
 
 
     componentDidMount() {
-        console.log(this.props);
         this.handleStart();
         this.subscribeToEvents();
     }
@@ -73,11 +76,12 @@ class Order extends Component {
             productSelected,
             price,
             qtd,
-            itens
+            itens,
+            errorQtd,
+            status
         } = this.state;
         if (action === 1) {
             if (customerSelected === '') {
-                //alert("Cliente não informado");
                 alert.error("Cliente não informado");
                 return false;
             }
@@ -101,6 +105,14 @@ class Order extends Component {
                 alert.error("Preço deve ser maior que zero");
                 return false;
             }
+            if (errorQtd) {
+                alert.error("Quantidade informada inválida. Favor verificar!");
+                return false;
+            }
+            if (status === 'RUIM') {
+                alert.error("Produto com rentabilidade RUIM não pode ser adicionado ao pedido");
+                return false;
+            }
         } else if (action === 2) {
             if (customerSelected === '') {
                 alert.error("Cliente não informado");
@@ -110,8 +122,20 @@ class Order extends Component {
                 alert.error("Para salvar o pedido é necessário ter ao menos 1 (um) item incluído.");
                 return false;
             }
+            if (errorQtd) {
+                alert.error("Quantidade informada inválida. Favor verificar!");
+                return false;
+            }
+            if (status === 'RUIM') {
+                alert.error("Produto com rentabilidade RUIM não pode ser adicionado ao pedido");
+                return false;
+            }
         }
         return true;
+    }
+
+    getStatus = (status) => {
+        return status === 'OTIMA';
     }
 
     getLastOrderID = async () => {
@@ -147,6 +171,8 @@ class Order extends Component {
                 edit: true,
                 selectedCustomer: false,
                 itemIDs: 0,
+                loaded: true,
+                status: ''
             });
         } else {
             const { id, customerId, total, itens } = this.props.order;
@@ -166,7 +192,9 @@ class Order extends Component {
                 productSelected: '',
                 price: '',
                 selectedCustomer: true,
-                itemIDs: productIndex++
+                itemIDs: productIndex++,
+                loaded: true,
+                status: ''
             });
         }
     }
@@ -175,6 +203,7 @@ class Order extends Component {
     componentWillReceiveProps(props) {
         const { order } = this.props;
         if (props.order !== order) {
+            this.setState({ loaded: false });
             this.handleStart();
         }
     }
@@ -194,13 +223,13 @@ class Order extends Component {
         if (event.target.value !== "") {
             const { price, multiple } = this.state.products.find((e) => e.id == event.target.value);
             if (multiple > 1) {
-                this.setState({ info: `Este produto apenas é vendido em multiplos de ${multiple}. Mas fique tranquilo que fazemos o calculo para você. Ex.: Caso você digite 5 vamos multiplicar por ${multiple} resultando em ${multiple * 5}` });
+                this.setState({ info: `* Este produto apenas é vendido em múltiplos de ${multiple}.` });
             } else {
                 this.setState({ info: '' });
             }
-            this.setState({ price: price.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.'), multiple, qtd: '' });
+            this.setState({ price: price.toFixed(2).replace('.', ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.'), multiple, qtd: '', status: 'BOA' });
         } else {
-            this.setState({ price: '', multiple: 1, qtd: '' });
+            this.setState({ price: '', multiple: 1, qtd: '', status: '' });
         }
     }
 
@@ -211,15 +240,35 @@ class Order extends Component {
 
     handleChangePrice = (event) => {
         let price = event.target.value;
-        this.setState({ price });
+        const { productSelected } = this.state;
+        let status = '';
+        const produtct = this.state.products.find((e) => e.id === Number(productSelected));
+        const newPrice = parseFloat(price.replace(/\./g, '').replace(',', '.'));
+        const oldPrice = parseFloat(produtct.price);
+        const pricePercent = oldPrice - (oldPrice * 0.10);
+
+        if (parseFloat(newPrice) > parseFloat(oldPrice)) {
+            status = "OTIMA";        
+        } else {
+            if (newPrice >= pricePercent && newPrice <= oldPrice) {
+                status = "BOA";
+            } else if (newPrice < pricePercent) {
+                status = "RUIM";
+            }
+        }
+        this.setState({ price, status });
     }
 
     handleBlurQtd = (event) => {
         let qtd = event.target.value;
-        if (event.target.value % this.state.multiple !== 0) {
-            qtd = qtd * this.state.multiple;
+        if (qtd % this.state.multiple !== 0) {
+            const { alert } = this.props;
+            alert.error(`Este produto é vendido apenas em múltiplos de ${this.state.multiple}. Favor ajustar a quantidade !`);
+            this.setState({ errorQtd: true });
+        } else {
+            this.setState({ errorQtd: false });
         }
-        this.setState({ qtd });
+
     }
 
     handlerAddItem = (e) => {
@@ -230,15 +279,17 @@ class Order extends Component {
             price,
             qtd,
             itens,
-            itemIDs
+            itemIDs,
+            status
         } = this.state;
 
         //Validação de campos
         if (!this.formValidation(1)) return;
 
-        const { name } = this.state.products.find((e) => e.id === Number(productSelected));
+        const produtct = this.state.products.find((e) => e.id === Number(productSelected));
+        const newPrice = parseFloat(price.replace(/\./g, '').replace(',', '.'));
 
-        total = parseFloat(total.replace(/\./g, '').replace(',', '.')) + (parseFloat(price.replace(/\./g, '').replace(',', '.') * Number(qtd)));
+        total = parseFloat(total.replace(/\./g, '').replace(',', '.')) + (parseFloat(newPrice * Number(qtd)));
         total = total.toFixed(2).replace(/\./g, ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
         itemIDs++;
         this.setState({
@@ -247,15 +298,18 @@ class Order extends Component {
             itens: [...itens, {
                 id: itemIDs,
                 productId: Number(productSelected),
-                productName: name,
+                productName: produtct.name,
                 price: price,
                 qtd: qtd,
-                status: "b"
+                status,
             }],
             selectedCustomer: true,
             productSelected: '',
             price: '',
-            qtd: ''
+            qtd: '',
+            info: '',
+            errorQtd: false,
+            status: ''
         });
     }
 
@@ -305,6 +359,24 @@ class Order extends Component {
     }
 
     render() {
+        const { loaded } = this.state;
+
+        if (!loaded) {
+            return (
+                <div className="content">
+                    <div className="loader-content">
+                        <div className="loader">
+                            <Loader
+                                type="Puff"
+                                color="#00cc62"
+                                height="100px"
+                                width="100px"
+                            />
+                        </div>
+                    </div>
+                </div>
+            );
+        }
         return (
             <div className="content">
                 <div className="content-panel">
@@ -369,6 +441,14 @@ class Order extends Component {
                                 onChange={this.handleChangePrice}
                             />
 
+                            <input
+                                type="text"
+                                className="input-order input-md"
+                                value={this.state.status}
+                                placeholder="Rentabilidade"
+                                readonly='true'
+                            />
+
                             <button className="btn" onClick={this.handlerAddItem}>
                                 <FontAwesomeIcon icon={faPlus} />
                                 &nbsp;Adicionar
@@ -399,7 +479,7 @@ class Order extends Component {
                                         <td>{item.qtd}</td>
                                         <td>{item.price}</td>
                                         <td>{this.sumTotalItem(item.price, item.qtd)}</td>
-                                        <td>{item.status}</td>
+                                        <td className={this.getStatus(item.status) ? 'td-center status-great' : 'td-center status-good'}>{item.status}</td>
                                         <td className={this.state.edit ? 'td-center' : 'hidden'}>
                                             <button className="btn-remove" onClick={(e) => this.handleRemoveItem(e, item.id)}>
                                                 <FontAwesomeIcon icon={faTrash} />

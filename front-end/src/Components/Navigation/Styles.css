@@ -35,3 +35,19 @@ li a:hover:not(.active) {
     font-weight: bold;
     text-align: center;
 }
+
+.loader-content-nav{
+    height: 50vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 10px;
+}
+
+.loader-nav{   
+    background: #663991;
+    padding: 15px;
+    border-radius: 50%;
+}

@@ -9,6 +9,22 @@
     padding: 10px;
 }
 
+.loader-content{
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 10px;
+}
+
+.loader{   
+    background: #fff;
+    padding: 15px;
+    border-radius: 50%;
+}
+
 .hidden { 
     display:none;
 }
@@ -121,11 +137,10 @@ select[readonly="true"] {
 }
 
 .select-product{
-    width: 50%;
+    width: 25%;
 }
 
 select {
-
     /* styling */
     padding: 8px 10px;
     width: 100%;
@@ -238,7 +253,7 @@ select.classic:focus {
     margin: 5px 10px 10px 10px;
     font-size: 12px;
     font-weight: bold;
-    color:#555;
+    color:#ff1a1a;
     font-style: italic;
 }
 
@@ -272,4 +287,13 @@ select.classic:focus {
   
 .products th:last-child{
     border-radius:0 10px 0 0;
+}
+
+.status-great{
+    font-weight: bold;
+    color: #00cc62;
+}
+.status-good{
+    font-weight: bold;
+    color: #0052cc;
 }
