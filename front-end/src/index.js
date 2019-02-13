@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { Provider } from "react-alert";
+
 import './index.css';
 import App from './App';
+import { AlertTemplate, Options } from "./Components/AlertTemplate/AlertTemplate";
 
 ReactDOM.render((
-    <BrowserRouter>
-        <Switch>
-            <Route path="/" component={App} />
-        </Switch>
-    </BrowserRouter>
+    <Provider template={AlertTemplate} {...Options}>
+        <App />
+    </Provider>
 ), document.getElementById('root'));

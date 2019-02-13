@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 
+import { withAlert } from "react-alert";
+
 import api from '../../Services/Api';
 import './Styles.css';
 
 import Logo from './Logo.png';
 
-export default class Login extends Component {
+class Login extends Component {
     state = {
         email: '',
     };
@@ -26,13 +28,14 @@ export default class Login extends Component {
         const { email } = this.state;
 
         if (!email.length) return;
+        const { alert } = this.props;
         const user = await api.post("api/login", { email });
         if (user.data) {
             localStorage.setItem('@OrdersTimm:email', user.data.email);
             localStorage.setItem('@OrdersTimm:name', user.data.name);
             this.props.history.push('/dashboard');
         } else {
-            alert("usuario invalido");
+            alert.error("Email inválido ou não cadastrado!");
         }
     }
     render() {
@@ -52,3 +55,6 @@ export default class Login extends Component {
         );
     }
 }
+
+//Disponibiliza a mensagem de alert como propriedade
+export default withAlert()(Login)

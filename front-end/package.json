@@ -22,7 +22,8 @@
     "text-mask-addons": "^3.8.0"
   },
   "scripts": {
-    "start": "react-scripts build && node server.js",
+    "start": "node server.js",
+    "heroku-prebuild": "react-scripts build",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

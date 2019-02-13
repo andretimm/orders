@@ -9,7 +9,6 @@ import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 import socket from 'socket.io-client';
 
 import api from '../../Services/Api';
-
 import './Styles.css';
 
 /**
