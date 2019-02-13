@@ -57,7 +57,7 @@ class Order extends Component {
 
     //Inicia comunicação o servidor socket e fica escutando o evento
     subscribeToEvents = () => {
-        const io = socket('http://localhost:3006');
+        const io = socket('https://api-pedidos-timm.herokuapp.com');
         io.on('newOrder', data => {
             if (this.state.edit) {
                 this.getLastOrderID();
