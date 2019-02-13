@@ -10,10 +10,10 @@ const CustomersControllers = require('./Controllers/CustomersControllers');
 const OrderController = require('./Controllers/OrderController');
 
 
-
+/*
 routes.get('*', (req, res) => {
     res.sendFile(path.join(__dirname + '/front-end/build/index.html'));
-});
+});*/
 
 //Loga
 routes.post('/api/login', UserController.getUser);

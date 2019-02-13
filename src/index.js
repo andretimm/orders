@@ -26,7 +26,7 @@ app.use((req, res, next) => {
     return next();
 });
 
-app.use(express.static(path.join(__dirname, '/front-end/build')));
+//app.use(express.static(path.join(__dirname, '/front-end/build')));
 
 //Habilita cross domain
 app.use(cors());
