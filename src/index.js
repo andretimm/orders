@@ -3,7 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
-
+const port = process.env.PORT || 3000;
 //Instancia aplicacao
 const app = express();
 
@@ -36,8 +36,8 @@ app.use(express.json());
 app.use(require('./routes'));
 
 //Inicia aplicacao
-server.listen(80, () => {
-    console.log('Server iniciado na porta 3006');
+server.listen(port, () => {
+    console.log('Server iniciado na porta ' + port);
 });
 
 module.exports = app; // Necessario para rodas os testes
