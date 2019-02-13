@@ -16,7 +16,7 @@ O projeto é dividido em 2 (duas) partes (Back e Front), será necessario abrir 
 ```sh
 //Terminal 1 frontend dentro da pasta raiz
 $ cd front-end
-$ yarn buil & yarn start
+$ yarn build & yarn start
 ```
 
 ```sh
