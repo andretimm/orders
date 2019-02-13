@@ -13,6 +13,12 @@ export default class Dashboard extends Component {
     handleSelectOrder = (order) => {
         this.setState({ order });
     }
+    componentDidMount(){
+        const user = localStorage.getItem('@OrdersTimm:name');
+        if(!user){
+            this.props.history.push('/');
+        }
+    }
 
     render() {
         return (

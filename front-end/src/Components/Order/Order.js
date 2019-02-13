@@ -92,6 +92,10 @@ export default class Order extends Component {
                 alert("Quantidade deve ser maior que zero");
                 return false;
             }
+            if (parseFloat(price.replace(/\./g, '').replace(',', '.')) <= 0) {
+                alert("Preço deve ser maior que zero");
+                return false;
+            }
         } else if (action === 2) {
             if (customerSelected === '') {
                 alert("Cliente não informado");
@@ -107,7 +111,11 @@ export default class Order extends Component {
 
     getLastOrderID = async () => {
         let lastId = await api.get('api/lastorder');
-        lastId = lastId.data.id + 1;
+        if (lastId.data) {
+            lastId = lastId.data.id + 1;
+        } else {
+            lastId = 1
+        }
         this.setState({ order: lastId });
     }
 
@@ -276,12 +284,13 @@ export default class Order extends Component {
 
         const { customerSelected, total, itens, order } = this.state;
         const { name } = this.state.customers.find((e) => e.id == customerSelected);
+        const user = localStorage.getItem('@OrdersTimm:email');
         const newOrder = {
             id: order,
             customerId: customerSelected,
             customerName: name,
             total,
-            user: '',
+            user,
             itens
         };
 
@@ -383,7 +392,7 @@ export default class Order extends Component {
                                     <th>Quantidade</th>
                                     <th>Preço</th>
                                     <th>Total</th>
-                                    <th>Status</th>
+                                    <th>Rentabilidade</th>
                                     <th className={this.state.edit ? '' : 'hidden'}></th>
                                 </tr>
                             </thead>

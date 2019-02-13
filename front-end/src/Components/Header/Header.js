@@ -1,7 +1,22 @@
-import React from 'react';
+import React, { Component } from 'react';
 
 import './Styles.css';
 
-const Header = () => <header id="main-header">Pedidos</header>;
+export default class Header extends Component {
 
-export default Header;
+    state = {
+        user: '',
+    }
+
+    componentDidMount() {
+        const user = localStorage.getItem('@OrdersTimm:name');
+        this.setState({ user });
+    }
+
+    render() {
+        const { user } = this.state;
+        return (
+            <header id="main-header">Pedidos - {user}</header>
+        );
+    }
+}

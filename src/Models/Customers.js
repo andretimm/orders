@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const CustomersSchema = new mongoose.Schema({
     id: Number,
     name: String,
+    email: String,
     createdAt: {
         type: Date,
         default: Date.now
