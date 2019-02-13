@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown, faPlus, faSave, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faSave, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { withAlert } from "react-alert";
 import MaskedInput from 'react-text-mask';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 import socket from 'socket.io-client';
@@ -25,7 +26,7 @@ const numberMask = createNumberMask({
     allowDecimal: false
 });
 
-export default class Order extends Component {
+class Order extends Component {
 
     state = {
         customerSelected: '',
@@ -44,7 +45,9 @@ export default class Order extends Component {
         itemIDs: 0,
     };
 
+
     componentDidMount() {
+        console.log(this.props);
         this.handleStart();
         this.subscribeToEvents();
     }
@@ -64,6 +67,7 @@ export default class Order extends Component {
      * 2 - Salvar pedido
      */
     formValidation = (action) => {
+        const { alert } = this.props;
         let {
             customerSelected,
             productSelected,
@@ -73,19 +77,20 @@ export default class Order extends Component {
         } = this.state;
         if (action === 1) {
             if (customerSelected === '') {
-                alert("Cliente não informado");
+                //alert("Cliente não informado");
+                alert.error("Cliente não informado");
                 return false;
             }
             if (productSelected === '') {
-                alert("Produto não informado");
+                alert.error("Produto não informado");
                 return false;
             }
             if (qtd === '') {
-                alert("Quantidade não informada");
+                alert.error("Quantidade não informada");
                 return false;
             }
             if (price === '') {
-                alert("Preço não informado");
+                alert.error("Preço não informado");
                 return false;
             }
             if (Number(qtd) <= 0) {
@@ -93,16 +98,16 @@ export default class Order extends Component {
                 return false;
             }
             if (parseFloat(price.replace(/\./g, '').replace(',', '.')) <= 0) {
-                alert("Preço deve ser maior que zero");
+                alert.error("Preço deve ser maior que zero");
                 return false;
             }
         } else if (action === 2) {
             if (customerSelected === '') {
-                alert("Cliente não informado");
+                alert.error("Cliente não informado");
                 return false;
             }
             if (itens.length === 0) {
-                alert("Para salvar o pedido é necessário ter ao menos 1 (um) item incluído.");
+                alert.error("Para salvar o pedido é necessário ter ao menos 1 (um) item incluído.");
                 return false;
             }
         }
@@ -340,14 +345,14 @@ export default class Order extends Component {
                         <hr className="line" />
 
                         <div className={this.state.edit ? 'input-container' : 'hidden'} >
-
-                            <select className="classic" value={this.state.productSelected} onChange={this.handleChangeProduct}>
-                                <option value="">Selecione um produto</option>
-                                {this.state.products.map(product => (
-                                    <option key={product.id} value={product.id}>{product.name}</option>
-                                ))}
-                            </select>
-
+                            <div className="select-product">
+                                <select className="classic" value={this.state.productSelected} onChange={this.handleChangeProduct}>
+                                    <option value="">Selecione um produto</option>
+                                    {this.state.products.map(product => (
+                                        <option key={product.id} value={product.id}>{product.name}</option>
+                                    ))}
+                                </select>
+                            </div>
                             <MaskedInput
                                 className="input-order input-sm"
                                 placeholder="Qtd"
@@ -410,3 +415,6 @@ export default class Order extends Component {
         );
     }
 }
+
+//Disponibiliza a mensagem de alert como propriedade
+export default withAlert()(Order)

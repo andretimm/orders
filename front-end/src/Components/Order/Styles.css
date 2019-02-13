@@ -120,6 +120,10 @@ select[readonly="true"] {
     touch-action: none;
 }
 
+.select-product{
+    width: 50%;
+}
+
 select {
 
     /* styling */
