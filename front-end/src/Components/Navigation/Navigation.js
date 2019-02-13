@@ -41,7 +41,7 @@ export default class Navigation extends Component {
 
     //Inicia comunicação o servidor socket e fica escutando o evento
     subscribeToEvents = () => {
-        const io = socket('https://api-pedidos-timm.herokuapp.com');
+        const io = socket('http://localhost:3006');
         io.on('newOrder', data => {
             let { orders } = this.state;
             orders.push(data);
