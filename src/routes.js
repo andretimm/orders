@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 
 //Instacia rotas
 const routes = express.Router();
@@ -7,6 +8,12 @@ const UserController = require('./Controllers/UserController');
 const ProductController = require('./Controllers/ProductController');
 const CustomersControllers = require('./Controllers/CustomersControllers');
 const OrderController = require('./Controllers/OrderController');
+
+
+
+routes.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname + '/front-end/build/index.html'));
+});
 
 //Loga
 routes.post('/api/login', UserController.getUser);

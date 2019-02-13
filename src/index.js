@@ -2,6 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
 
 //Instancia aplicacao
 const app = express();
@@ -23,7 +24,9 @@ mongoose.connect(
 app.use((req, res, next) => {
     req.io = io;
     return next();
-})
+});
+
+app.use(express.static(path.join(__dirname, '/front-end/build')));
 
 //Habilita cross domain
 app.use(cors());
@@ -33,7 +36,7 @@ app.use(express.json());
 app.use(require('./routes'));
 
 //Inicia aplicacao
-server.listen(3006, () => {
+server.listen(5000, () => {
     console.log('Server iniciado na porta 3006');
 });
 
