@@ -318,17 +318,12 @@ export default class Order extends Component {
                     <form>
                         <div className=" order-customer">
                             <div className="input-container">
-                                <div className="select-style">
-                                    <select value={this.state.customerSelected} onChange={this.handleChangeCustomer} readonly={this.state.selectedCustomer ? 'true' : 'false'}>
-                                        <option value="">Selecione um cliente</option>
-                                        {this.state.customers.map(customer => (
-                                            <option key={customer.id} value={customer.id}>{customer.name}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                                <div className="icon-container">
-                                    <FontAwesomeIcon className="icon" icon={faChevronDown} />
-                                </div>
+                                <select className="classic" value={this.state.customerSelected} onChange={this.handleChangeCustomer} readonly={this.state.selectedCustomer ? 'true' : 'false'}>
+                                    <option value="">Selecione um cliente</option>
+                                    {this.state.customers.map(customer => (
+                                        <option key={customer.id} value={customer.id}>{customer.name}</option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
                         <div className={this.state.edit ? 'order-save' : 'hidden'}>
@@ -345,17 +340,13 @@ export default class Order extends Component {
                         <hr className="line" />
 
                         <div className={this.state.edit ? 'input-container' : 'hidden'} >
-                            <div className="select-style">
-                                <select value={this.state.productSelected} onChange={this.handleChangeProduct}>
-                                    <option value="">Selecione um produto</option>
-                                    {this.state.products.map(product => (
-                                        <option key={product.id} value={product.id}>{product.name}</option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="icon-container">
-                                <FontAwesomeIcon className="icon" icon={faChevronDown} />
-                            </div>
+
+                            <select className="classic" value={this.state.productSelected} onChange={this.handleChangeProduct}>
+                                <option value="">Selecione um produto</option>
+                                {this.state.products.map(product => (
+                                    <option key={product.id} value={product.id}>{product.name}</option>
+                                ))}
+                            </select>
 
                             <MaskedInput
                                 className="input-order input-sm"
