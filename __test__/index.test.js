@@ -135,7 +135,7 @@ describe('Orders', () => {
         });
     });
 
-    //GET Ultimo id produto do pedido
+    //Deleta registro gerados no teste
     describe('Delte Order', () => {
         it('Remove registros gerado via teste', (done) => {
             Orders.deleteMany({ user: '[unit-teste]' }, (err) => {

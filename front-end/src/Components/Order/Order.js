@@ -239,15 +239,15 @@ class Order extends Component {
 
     handleChangePrice = (event) => {
         let price = event.target.value;
-        const { productSelected } = this.state;
         let status = '';
+        const { productSelected } = this.state;
         const produtct = this.state.products.find((e) => e.id === Number(productSelected));
         const newPrice = parseFloat(price.replace(/\./g, '').replace(',', '.'));
         const oldPrice = parseFloat(produtct.price);
         const pricePercent = oldPrice - (oldPrice * 0.10);
 
         if (parseFloat(newPrice) > parseFloat(oldPrice)) {
-            status = "OTIMA";        
+            status = "OTIMA";
         } else {
             if (newPrice >= pricePercent && newPrice <= oldPrice) {
                 status = "BOA";
@@ -255,6 +255,7 @@ class Order extends Component {
                 status = "RUIM";
             }
         }
+
         this.setState({ price, status });
     }
 
@@ -267,7 +268,6 @@ class Order extends Component {
         } else {
             this.setState({ errorQtd: false });
         }
-
     }
 
     handlerAddItem = (e) => {
@@ -291,6 +291,7 @@ class Order extends Component {
         total = parseFloat(total.replace(/\./g, '').replace(',', '.')) + (parseFloat(newPrice * Number(qtd)));
         total = total.toFixed(2).replace(/\./g, ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
         itemIDs++;
+
         this.setState({
             total,
             itemIDs,
@@ -310,6 +311,7 @@ class Order extends Component {
             errorQtd: false,
             status: ''
         });
+
     }
 
     handleRemoveItem = (e, id) => {
@@ -323,11 +325,13 @@ class Order extends Component {
         total = parseFloat(total.replace(/\./g, '').replace(',', '.')) - (parseFloat(totalItem.replace(/\./g, '').replace(',', '.')));
         total = total.toFixed(2).replace(/\./g, ',').replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
         itens.splice(index, 1);
+
         if (total === '0,00') {
             this.setState({ itens, total, selectedCustomer: false });
         } else {
             this.setState({ itens, total });
         }
+
     }
 
     handleEdit = (e) => {
@@ -376,6 +380,7 @@ class Order extends Component {
                 </div>
             );
         }
+
         return (
             <div className="content">
                 <div className="content-panel">
@@ -394,7 +399,12 @@ class Order extends Component {
                     <form>
                         <div className=" order-customer">
                             <div className="input-container">
-                                <select className="classic" value={this.state.customerSelected} onChange={this.handleChangeCustomer} readonly={this.state.selectedCustomer ? 'true' : 'false'}>
+                                <select
+                                    className="classic"
+                                    value={this.state.customerSelected}
+                                    onChange={this.handleChangeCustomer}
+                                    readonly={this.state.selectedCustomer ? 'true' : 'false'}
+                                >
                                     <option value="">Selecione um cliente</option>
                                     {this.state.customers.map(customer => (
                                         <option key={customer.id} value={customer.id}>{customer.name}</option>
@@ -417,7 +427,11 @@ class Order extends Component {
 
                         <div className={this.state.edit ? 'input-container' : 'hidden'} >
                             <div className="select-product">
-                                <select className="classic" value={this.state.productSelected} onChange={this.handleChangeProduct}>
+                                <select
+                                    className="classic"
+                                    value={this.state.productSelected}
+                                    onChange={this.handleChangeProduct}
+                                >
                                     <option value="">Selecione um produto</option>
                                     {this.state.products.map(product => (
                                         <option key={product.id} value={product.id}>{product.name}</option>
@@ -478,7 +492,9 @@ class Order extends Component {
                                         <td>{item.qtd}</td>
                                         <td>{item.price}</td>
                                         <td>{this.sumTotalItem(item.price, item.qtd)}</td>
-                                        <td className={this.getStatus(item.status) ? 'td-center status-great' : 'td-center status-good'}>{item.status}</td>
+                                        <td className={this.getStatus(item.status) ? 'td-center status-great' : 'td-center status-good'}>
+                                            {item.status}
+                                        </td>
                                         <td className={this.state.edit ? 'td-center' : 'hidden'}>
                                             <button className="btn-remove" onClick={(e) => this.handleRemoveItem(e, item.id)}>
                                                 <FontAwesomeIcon icon={faTrash} />
