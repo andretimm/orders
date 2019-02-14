@@ -1,5 +1,4 @@
 const express = require('express');
-const path = require('path');
 
 //Instacia rotas
 const routes = express.Router();
@@ -9,21 +8,12 @@ const ProductController = require('./Controllers/ProductController');
 const CustomersControllers = require('./Controllers/CustomersControllers');
 const OrderController = require('./Controllers/OrderController');
 
-
-/*
-routes.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname + '/front-end/build/index.html'));
-});*/
-
 //Loga
 routes.post('/api/login', UserController.getUser);
 //Cria usuario
 routes.post('/api/createUser', UserController.setUser);
 //Cria ordem
 routes.post('/api/orders', OrderController.setOrder);
-
-
-
 
 //Retorna produtos
 routes.get('/api/products', ProductController.getProduct);

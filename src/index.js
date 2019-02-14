@@ -2,7 +2,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const path = require('path');
 const port = process.env.PORT || 3006;
 //Instancia aplicacao
 const app = express();
@@ -25,8 +24,6 @@ app.use((req, res, next) => {
     req.io = io;
     return next();
 });
-
-//app.use(express.static(path.join(__dirname, '/front-end/build')));
 
 //Habilita cross domain
 app.use(cors());
